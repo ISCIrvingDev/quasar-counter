@@ -1,43 +1,99 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <example-component
-      title="Example component"
-      active
-      :todos="todos"
-      :meta="meta"
-    ></example-component>
+  <q-page class="flex flex-center text-white" v-touch-pan.vertical.prevent.mouse="handlePan">
+    <div class="row">
+      <q-input
+        type="text"
+        placeholder="Counter"
+        v-model="data.name"
+        input-class="text-center text-h5 text-white"
+        color="teal"
+        filled
+      />
+    </div>
+
+    <div class="row full-width items-center">
+      <div class="col text-center">
+        <q-btn
+          round
+          icon="remove"
+          size="xl"
+          @click="decreaseCounter"
+          v-touch-repeat:0:100.mouse.enter.space="decreaseCounter"
+        />
+      </div>
+
+      <div class="col text-center text-h2">
+        {{ data.counter }}
+      </div>
+
+      <div class="col text-center">
+        <q-btn
+          round
+          icon="add"
+          size="xl"
+          @click="increaseCounter"
+          v-touch-repeat:0:100.mouse.enter.space="increaseCounter"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <q-btn round icon="restart_alt" size="xl" @click="resetCounter" />
+    </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { Todo, Meta } from 'components/models';
-import ExampleComponent from 'components/ExampleComponent.vue';
+import { useQuasar } from 'quasar'
+import { reactive, watch } from 'vue'
 
-const todos = ref<Todo[]>([
-  {
-    id: 1,
-    content: 'ct1'
-  },
-  {
-    id: 2,
-    content: 'ct2'
-  },
-  {
-    id: 3,
-    content: 'ct3'
-  },
-  {
-    id: 4,
-    content: 'ct4'
-  },
-  {
-    id: 5,
-    content: 'ct5'
-  }
-]);
+/*
+  Storage
+*/
+const $q = useQuasar()
 
-const meta = ref<Meta>({
-  totalCount: 1200
-});
+/*
+  Variables
+*/
+const data = reactive({
+  counter: 0,
+  name: '',
+})
+const savedData = $q.localStorage.getItem('counter')
+
+/*
+  Al iniciar la app
+*/
+watch(data, (value) => {
+  $q.localStorage.set('counter', value)
+})
+
+if (savedData) Object.assign(data, savedData)
+
+/*
+  Metodos
+*/
+const increaseCounter = () => {
+  data.counter++
+}
+const decreaseCounter = () => {
+  if (data.counter > 0) data.counter--
+}
+const resetCounter = () => {
+  data.name = ''
+  data.counter = 0
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handlePan = (e: any) => {
+  console.log(e.delta.y)
+  if (e.delta.y < 0) increaseCounter()
+  else decreaseCounter()
+}
 </script>
+
+<style scoped>
+.q-page {
+  max-width: 700px;
+  margin: 0 auto;
+}
+</style>

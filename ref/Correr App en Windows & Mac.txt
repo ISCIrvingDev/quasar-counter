@@ -1,0 +1,23 @@
+  // Ref
+https://quasar.dev/quasar-cli-vite/developing-capacitor-apps/preparation#ios-setup
+
+  // Requerimientos
+* macOS
+* Xcode
+* CocoaPods
+
+  // Pasos
+1) Agregar el "Electron mode" al proyecto
+quasar mode add electron
+
+2) Emepzar el desarrollo con HMR (al ejecutar este comando por primera vez tambien se instala el "Electron mode")
+quasar dev -m electron
+
+3) Crear la app
+quasar build -m electron
+
+Notas)
+* Si se trabaja con TypeScript, agregar la siguiente linea al inicio del archivo "src-electron\electron-main.ts" para evitar errores (sobretodo al momento del build):
+/* eslint-disable @typescript-eslint/no-floating-promises */
+
+* Output folder.......... C:\Programacion\0) Practicas\Vue\quasar-counter\dist\electron
